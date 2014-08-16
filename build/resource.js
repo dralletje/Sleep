@@ -132,14 +132,14 @@ module.exports = Resource = (function() {
     return response.setBody(Promise["try"](this._bubble, [req, response], this));
   };
 
-  Resource.prototype.listen = function(port) {
+  Resource.prototype.listen = function(port, fn) {
     return this._server = http.createServer((function(_this) {
       return function(req, res) {
         return _this._forgeRequest(req).then(function(response) {
           return response.applyTo(res);
         });
       };
-    })(this)).listen(port);
+    })(this)).listen(port, fn);
   };
 
   return Resource;

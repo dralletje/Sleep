@@ -132,12 +132,12 @@ module.exports = class Resource
 
 
   # Change this resource into a server
-  listen: (port) ->
+  listen: (port, fn) ->
     @_server = http.createServer (req, res) =>
       # Go up the tree, all the way
       @_forgeRequest(req).then (response) ->
         response.applyTo res
-    .listen port
+    .listen port, fn
 
 ['get', 'post', 'put', 'delete'].forEach (method) ->
   Resource::[method] = (args...) ->

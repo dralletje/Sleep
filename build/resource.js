@@ -22,6 +22,7 @@ module.exports = Resource = (function() {
     this.resources = [];
     this.methods = {};
     this.uses = [];
+    this.HAL = void 0;
     this.debug = debug || false;
   }
 
@@ -85,6 +86,9 @@ module.exports = Resource = (function() {
 
   Resource.prototype._bubble = function(req, response) {
     var promise, url;
+    if (this.HAL != null) {
+      response.hal = this.HAL;
+    }
     url = req.url;
     promise = Promise.bind(response)["return"](req);
     this.uses.forEach(function(use) {
@@ -130,6 +134,13 @@ module.exports = Resource = (function() {
     }
     response = new Response(req, this.debug);
     return response.setBody(Promise["try"](this._bubble, [req, response], this));
+  };
+
+  Resource.prototype.enableHAL = function(yesOrNo) {
+    if (yesOrNo == null) {
+      yesOrNo = true;
+    }
+    return this.HAL = yesOrNo;
   };
 
   Resource.prototype.listen = function(port, fn) {

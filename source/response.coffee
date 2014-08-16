@@ -10,6 +10,7 @@ module.exports = class Response
   constructor: (req, debug) ->
     @req   = req
     @debug = debug
+    @hal = no
 
     # Default headers
     @headers =
@@ -17,7 +18,8 @@ module.exports = class Response
     @_status = 200
     @body = null
 
-    # HAL!
+    # HAL! (Do it anyway, in the end we will see
+    # whether or not hall is enabled)
     @_links =
       self: href: req.url.match(/(.*\/[^/]+)\/?$/)?[1] or '/'
 
@@ -27,6 +29,7 @@ module.exports = class Response
     @_embedded = {}
 
 
+  # Used by the latest resource that recieves the bound request
   setBody: (promise) ->
     promise.then (body) =>
       if not body?
@@ -125,8 +128,11 @@ module.exports = class Response
     if @body instanceof Array
       @body = item: @body
 
-    res.setHeader 'Content-Type', 'application/json' # Using json for now, makes things easier for clients
+    # Using json for now, makes things easier for clients
+    res.setHeader 'Content-Type', 'application/json'
 
-    @body._links = @_links
-    @body._embedded = @_embedded
+    # If HAL, add HAL
+    if @HAL
+      @body._links = @_links
+      @body._embedded = @_embedded
     res.end JSON.stringify @body

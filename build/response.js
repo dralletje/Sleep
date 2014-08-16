@@ -23,6 +23,7 @@ module.exports = Response = (function() {
     var parents, _ref;
     this.req = req;
     this.debug = debug;
+    this.hal = false;
     this.headers = {
       'Content-Type': 'application/octet-stream'
     };
@@ -158,8 +159,10 @@ module.exports = Response = (function() {
       };
     }
     res.setHeader('Content-Type', 'application/json');
-    this.body._links = this._links;
-    this.body._embedded = this._embedded;
+    if (this.HAL) {
+      this.body._links = this._links;
+      this.body._embedded = this._embedded;
+    }
     return res.end(JSON.stringify(this.body));
   };
 

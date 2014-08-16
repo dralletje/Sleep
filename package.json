@@ -1,0 +1,25 @@
+{
+  "name": "sleeprest",
+  "version": "0.1.6",
+  "description": "Resource driven REST server.",
+  "main": "index.js",
+  "dependencies": {
+    "bluebird": "~2.2.1",
+    "lodash": "~2.4.1",
+    "formidable": "~1.0.15"
+  },
+  "devDependencies": {
+    "gulp": "~3.8.5",
+    "coffee-script": "~1.7.1",
+    "gulp-plumber": "~0.6.3",
+    "gulp-coffee": "~2.0.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "RESTfull"
+  ],
+  "author": "Michiel Dral <m.c.dral@gmail.com>",
+  "license": "MIT"
+}

@@ -145,14 +145,16 @@ module.exports = Resource = (function() {
     }
   };
 
-  Resource.prototype.listen = function(port, fn) {
-    return this._server = http.createServer((function(_this) {
+  Resource.prototype.listen = function() {
+    var args, _ref;
+    args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+    return this._server = (_ref = http.createServer((function(_this) {
       return function(req, res) {
         return _this._forgeRequest(req).then(function(response) {
           return response.applyTo(res);
         });
       };
-    })(this)).listen(port, fn);
+    })(this))).listen.apply(_ref, args);
   };
 
   return Resource;

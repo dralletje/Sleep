@@ -13,13 +13,12 @@ RegExp.quote = (str) ->
   str.replace /([.?*+^$[\]\\(){}|-])/g, "\\$1"
 
 module.exports = class Resource
-  constructor: (debug) ->
+  constructor: (options) ->
     @resources = []
     @methods = {}
     @uses = []
 
-    @HAL = undefined
-    @debug = debug or no
+    @options = options or {}
 
   # Define /end/ function for a method on this resource
   method: (method, uses..., fn) ->
@@ -82,8 +81,8 @@ module.exports = class Resource
   # Get request from listening or from a parent resource
   _bubble: (req, response) ->
     # Enable/Disable hall if this resource is supposed to
-    if @HAL?
-      response.hal = @HAL
+    for key,value of @options
+      response.options[key] = value
 
     url = req.url
     #console.log '\nGot a request:', req
@@ -136,10 +135,13 @@ module.exports = class Resource
     response = new Response req, @debug # Placeholder for the real response
     response.setBody Promise.try(@_bubble, [req, response], this)
 
-  # This will disable or enable HAL in this resource
+  # Set a certain option in the resource.
   # Subresources may overwrite this, as this also may overwrite super resources.
-  enableHAL: (yesOrNo=yes) ->
-    @HAL = yesOrNo
+  set: (option, value) ->
+    if not value?
+      delete @options[option]
+    else
+      @options[option] = value
 
 
   # Change this resource into a server

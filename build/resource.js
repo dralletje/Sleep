@@ -18,12 +18,11 @@ RegExp.quote = function(str) {
 };
 
 module.exports = Resource = (function() {
-  function Resource(debug) {
+  function Resource(options) {
     this.resources = [];
     this.methods = {};
     this.uses = [];
-    this.HAL = void 0;
-    this.debug = debug || false;
+    this.options = options || {};
   }
 
   Resource.prototype.method = function() {
@@ -85,9 +84,11 @@ module.exports = Resource = (function() {
   Resource.prototype.res = Resource.prototype.resource;
 
   Resource.prototype._bubble = function(req, response) {
-    var promise, url;
-    if (this.HAL != null) {
-      response.hal = this.HAL;
+    var key, promise, url, value, _ref;
+    _ref = this.options;
+    for (key in _ref) {
+      value = _ref[key];
+      response.options[key] = value;
     }
     url = req.url;
     promise = Promise.bind(response)["return"](req);
@@ -96,7 +97,7 @@ module.exports = Resource = (function() {
     });
     return promise.then((function(_this) {
       return function() {
-        var key, match, matching, paramname, params, _i, _len, _ref;
+        var match, matching, paramname, params, _i, _len, _ref1;
         matching = _.find(_this.resources, function(resource) {
           return url.match(resource.uriRegExp) != null;
         });
@@ -115,9 +116,9 @@ module.exports = Resource = (function() {
         }
         match = url.match(matching.uriRegExp);
         params = req.params || (req.params = {});
-        _ref = matching.paramNames;
-        for (key = _i = 0, _len = _ref.length; _i < _len; key = ++_i) {
-          paramname = _ref[key];
+        _ref1 = matching.paramNames;
+        for (key = _i = 0, _len = _ref1.length; _i < _len; key = ++_i) {
+          paramname = _ref1[key];
           params[paramname] = match[key + 1];
         }
         req.url = url.slice(match[0].length);
@@ -136,11 +137,12 @@ module.exports = Resource = (function() {
     return response.setBody(Promise["try"](this._bubble, [req, response], this));
   };
 
-  Resource.prototype.enableHAL = function(yesOrNo) {
-    if (yesOrNo == null) {
-      yesOrNo = true;
+  Resource.prototype.set = function(option, value) {
+    if (value == null) {
+      return delete this.options[option];
+    } else {
+      return this.options[option] = value;
     }
-    return this.HAL = yesOrNo;
   };
 
   Resource.prototype.listen = function(port, fn) {

@@ -19,11 +19,10 @@ SleepHttpError = (function(_super) {
 })(Error);
 
 module.exports = Response = (function() {
-  function Response(req, debug) {
+  function Response(req) {
     var parents, _ref;
     this.req = req;
-    this.debug = debug;
-    this.hal = false;
+    this.options = {};
     this.headers = {
       'Content-Type': 'application/octet-stream'
     };
@@ -59,7 +58,7 @@ module.exports = Response = (function() {
     })(this))["catch"]((function(_this) {
       return function(err) {
         var match, message, status, _i;
-        if (_this.debug) {
+        if (_this.options.debug) {
           console.log('Error in Sleep Response:');
           console.log(err.stack);
         }
@@ -159,7 +158,7 @@ module.exports = Response = (function() {
       };
     }
     res.setHeader('Content-Type', 'application/json');
-    if (this.HAL) {
+    if (this.options.hal) {
       this.body._links = this._links;
       this.body._embedded = this._embedded;
     }

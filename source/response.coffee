@@ -7,10 +7,9 @@ class SleepHttpError extends Error
     Error.captureStackTrace(this, SleepHttpError)
 
 module.exports = class Response
-  constructor: (req, debug) ->
+  constructor: (req) ->
     @req   = req
-    @debug = debug
-    @hal = no
+    @options = {}
 
     # Default headers
     @headers =
@@ -43,7 +42,7 @@ module.exports = class Response
       this
 
     .catch (err) =>
-      if @debug
+      if @options.debug
         console.log 'Error in Sleep Response:'
         console.log err.stack
 
@@ -132,7 +131,7 @@ module.exports = class Response
     res.setHeader 'Content-Type', 'application/json'
 
     # If HAL, add HAL
-    if @HAL
+    if @options.hal
       @body._links = @_links
       @body._embedded = @_embedded
     res.end JSON.stringify @body
